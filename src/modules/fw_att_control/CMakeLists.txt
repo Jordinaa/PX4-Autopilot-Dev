@@ -30,13 +30,14 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 ############################################################################
+add_subdirectory(flight_test_input)
+
 px4_add_module(
 	MODULE modules__fw_att_control
 	MAIN fw_att_control
 	SRCS
 		FixedwingAttitudeControl.cpp
 		FixedwingAttitudeControl.hpp
-
 		ecl_controller.cpp
 		ecl_pitch_controller.cpp
 		ecl_roll_controller.cpp
@@ -44,4 +45,5 @@ px4_add_module(
 		ecl_yaw_controller.cpp
 	DEPENDS
 		px4_work_queue
+		FlightTestInput
 	)
