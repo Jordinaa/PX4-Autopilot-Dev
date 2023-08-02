@@ -71,6 +71,8 @@
 #include <uORB/topics/vehicle_thrust_setpoint.h>
 #include <uORB/topics/vehicle_torque_setpoint.h>
 
+#include "FlightTestInput.hpp"
+
 using matrix::Eulerf;
 using matrix::Quatf;
 
@@ -97,6 +99,9 @@ public:
 	bool init();
 
 private:
+	//added injection cast here
+	FlightTestInput _flight_test_input;
+
 	void Run() override;
 
 	void publishTorqueSetpoint(const hrt_abstime &timestamp_sample);
@@ -222,7 +227,12 @@ private:
 
 		(ParamFloat<px4::params::TRIM_PITCH>) _param_trim_pitch,
 		(ParamFloat<px4::params::TRIM_ROLL>) _param_trim_roll,
-		(ParamFloat<px4::params::TRIM_YAW>) _param_trim_yaw
+		(ParamFloat<px4::params::TRIM_YAW>) _param_trim_yaw,
+
+		(ParamFloat<px4::params::SC_ROLL_ANG_MAX>) _param_sc_roll_ang_max,
+		(ParamFloat<px4::params::SC_PITCH_ANG_MAX>) _param_sc_pitch_ang_max,
+		(ParamFloat<px4::params::SC_PITCH_RAT_MAX>) _param_sc_pitch_rat_max,
+		(ParamFloat<px4::params::SC_ROLL_RAT_MAX>) _param_sc_roll_rat_max
 	)
 
 	ECL_RollController		_roll_ctrl;

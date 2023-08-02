@@ -300,6 +300,9 @@ void FixedwingAttitudeControl::Run()
 		const float dt = math::constrain((att.timestamp - _last_run) * 1e-6f, 0.002f, 0.04f);
 		_last_run = att.timestamp;
 
+		/* guard against too large deltaT's */
+		_flight_test_input.update(dt);
+
 		/* get current rotation matrix and euler angles from control state quaternions */
 		matrix::Dcmf R = matrix::Quatf(att.q);
 
@@ -420,6 +423,11 @@ void FixedwingAttitudeControl::Run()
 				_wheel_ctrl.reset_integrator();
 			}
 
+			/* Attitude reference injection */
+			_att_sp.roll_body = _flight_test_input.inject(7, _att_sp.roll_body);
+			_att_sp.pitch_body = _flight_test_input.inject(8, _att_sp.pitch_body);
+			_att_sp.yaw_body = _flight_test_input.inject(9, _att_sp.yaw_body);
+
 			/* Prepare data for attitude controllers */
 			ECL_ControlData control_input{};
 			control_input.roll = euler_angles.phi();
@@ -521,6 +529,11 @@ void FixedwingAttitudeControl::Run()
 					control_input.roll_rate_setpoint = _roll_ctrl.get_desired_rate();
 					control_input.pitch_rate_setpoint = _pitch_ctrl.get_desired_rate();
 					control_input.yaw_rate_setpoint = _yaw_ctrl.get_desired_rate();
+
+					/* Angular rate setpoint injection */
+					control_input.roll_rate_setpoint = _flight_test_input.inject(4, control_input.roll_rate_setpoint);
+					control_input.pitch_rate_setpoint = _flight_test_input.inject(5, control_input.pitch_rate_setpoint);
+					control_input.yaw_rate_setpoint = _flight_test_input.inject(6, control_input.yaw_rate_setpoint);
 
 					const hrt_abstime now = hrt_absolute_time();
 					autotune_attitude_control_status_s pid_autotune;
@@ -654,6 +667,11 @@ void FixedwingAttitudeControl::Run()
 		/* lazily publish the setpoint only once available */
 		_actuators.timestamp = hrt_absolute_time();
 		_actuators.timestamp_sample = att.timestamp;
+
+		/* actuator injection */
+		_actuators.control[0] = _flight_test_input.inject(1, _actuators.control[0]);
+		_actuators.control[1] = _flight_test_input.inject(2, _actuators.control[1]);
+		_actuators.control[2] = _flight_test_input.inject(3, _actuators.control[2]);
 
 		/* Only publish if any of the proper modes are enabled */
 		if (_vcontrol_mode.flag_control_rates_enabled ||
