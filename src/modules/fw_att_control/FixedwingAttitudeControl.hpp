@@ -173,7 +173,7 @@ private:
 
 		(ParamInt<px4::params::FW_ARSP_SCALE_EN>) _param_fw_arsp_scale_en,
 
-		(ParamInt<px4::params::FW_BAT_SCALE_EN>) _param_fw_bat_scale_en,
+		(ParamBool<px4::params::FW_BAT_SCALE_EN>) _param_fw_bat_scale_en,
 
 		(ParamFloat<px4::params::FW_DTRIM_P_FLPS>) _param_fw_dtrim_p_flps,
 		(ParamFloat<px4::params::FW_DTRIM_P_VMAX>) _param_fw_dtrim_p_vmax,
